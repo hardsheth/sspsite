@@ -1,0 +1,51 @@
+/* Container similar to MUI DemoContainer */
+.mui-container {
+  max-width: 260px;
+}
+
+/* Label similar to MUI */
+.mui-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+}
+
+/* Input styling similar to MUI */
+.mui-input {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #c7c7c7;
+  transition: all 0.2s ease-in-out;
+  font-size: 0.95rem;
+}
+
+.mui-input:focus {
+  border-color: #1976d2 !important;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.25);
+}
+
+/* Calendar (popup) styling similar to MUI popover */
+.mui-calendar {
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  padding: 8px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+/* Calendar header text */
+.mui-calendar .react-datepicker__current-month {
+  font-weight: 600;
+  color: #1976d2;
+}
+
+/* Selected day */
+.react-datepicker__day--selected {
+  background-color: #1976d2 !important;
+  border-radius: 50% !important;
+}
+
+/* Hover day */
+.react-datepicker__day:hover {
+  border-radius: 50%;
+  background-color: rgba(25, 118, 210, 0.15);
+}
