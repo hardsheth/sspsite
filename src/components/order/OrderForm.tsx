@@ -5,6 +5,7 @@ import Form from "../form/Form";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import VoiceInput from "../form/voice-input/VoiceInput";
+import VoiceTextarea from "../form/voice-input/VoiceTextArea";
 
 interface FormValues {
   customerName: string;
@@ -46,16 +47,32 @@ export default function OrderForm() {
             control={method.control}
             rules={{
               required: {
-                message: "Booking date is required",
+                message: "Customer name is required",
                 value: true
               }
             }}
             render={({ field, fieldState: { error } }) => (
-              <VoiceInput placeholder="Email" label="Customer Name" require={true} {...field} type="text" hint={error?.message} />
+              <VoiceInput placeholder="Email" label="Customer Name" require={true} {...field} type="text" hint={error?.message} error={!!error} />
             )}
           />
-          {/* <Input placeholder="Email" {...register("email")} /> */}
         </div>
+         <div>
+         
+          <Controller
+            name="address"
+            control={method.control}
+            rules={{
+              required: {
+                message: "Address is required",
+                value: true
+              }
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <VoiceTextarea placeholder="Address" label="Address" require={true} {...field}  hint={error?.message} error={!!error} />
+            )}
+          />
+        </div>
+          {/* <Input placeholder="Email" {...register("email")} /> */}
         {/* 
         <Input placeholder="Booking Date" {...register("bookingDate")} />
         <Input placeholder="Delivery Date" {...register("deliveryDate")} />

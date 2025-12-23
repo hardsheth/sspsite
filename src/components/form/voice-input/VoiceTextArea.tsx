@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, forwardRef, useRef } from "react";
 import { useFormContext } from "react-hook-form";
-import { InputProps } from "../input/InputField";
 import Label from "../Label";
+import { TextareaProps } from "../input/TextArea";
 
 // Type declarations for Web Speech API
 declare global {
@@ -44,21 +44,31 @@ interface SpeechRecognitionAlternative {
 
 declare var SpeechRecognition: {
   prototype: SpeechRecognition;
-  new (): SpeechRecognition;
+  new(): SpeechRecognition;
 };
 
-interface VoiceInputProps extends InputProps {
+interface VoiceInputProps extends Omit<TextareaProps, 'onChange'> {
   require?: boolean;
   label: string;
+  id?: string;
+  name?: string;
+  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
+  min?: number;
+  max?: number;
+  disabled?: boolean;
+  className?: string;
+  success?: boolean;
+  error?: boolean;
+  hint?: string;
 }
 
-const VoiceInput = forwardRef<HTMLInputElement, VoiceInputProps>(({
-  placeholder = "+1 (555) 000-0000",
-  type,
+const VoiceTextarea = forwardRef<HTMLTextAreaElement, VoiceInputProps>(({
+  placeholder = "Enter your message",
   id,
   name,
   onChange,
   min,
+  rows = 3,
   max,
   disabled,
   label,
@@ -104,9 +114,9 @@ const VoiceInput = forwardRef<HTMLInputElement, VoiceInputProps>(({
     };
 
     recognitionRef.current.onresult = (event) => {
-      console.log(event.results,"results");      
+      console.log(event.results, "results");
       const transcript = event.results[0][0].transcript;
-      console.log(transcript,"transcript");      
+      console.log(transcript, "transcript");
       if (name && setValue) {
         setValue(name, transcript);
       }
@@ -130,25 +140,25 @@ const VoiceInput = forwardRef<HTMLInputElement, VoiceInputProps>(({
       <Label>{label} {require && <span className="text-red-500">*</span>}</Label>
       <div className="relative flex">
         {/* Input field */}
-        <input
+        <textarea
           ref={ref}
-          type={type}
           id={id}
           name={name}
           placeholder={placeholder}
           disabled={disabled}
           onChange={onChange}
-          min={min}
-          max={max}
+          maxLength={max}
+          minLength={min}
           value={value}
           className={inputClasses}
+          rows={rows}
         />
 
         <span className="absolute right-0 top-1/2 -translate-y-1/2 border-r border-gray-200 px-3.5 py-3 text-gray-500 dark:border-gray-800 dark:text-gray-400">
           <button
             type="button"
             onClick={isListening ? stopListening : startListening}
-           
+
             disabled={disabled}
           >
             {isListening ? 'Stop' : '🎤'}
@@ -159,13 +169,12 @@ const VoiceInput = forwardRef<HTMLInputElement, VoiceInputProps>(({
       {/* Optional Hint Text */}
       {hint && (
         <p
-          className={`mt-1.5 text-xs ${
-            error
-              ? "text-error-500"
-              : success
+          className={`mt-1.5 text-xs ${error
+            ? "text-error-500"
+            : success
               ? "text-success-500"
               : "text-gray-500"
-          }`}
+            }`}
         >
           {hint}
         </p>
@@ -174,4 +183,4 @@ const VoiceInput = forwardRef<HTMLInputElement, VoiceInputProps>(({
   );
 });
 
-export default VoiceInput;
+export default VoiceTextarea;
