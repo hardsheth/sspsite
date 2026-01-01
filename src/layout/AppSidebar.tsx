@@ -39,10 +39,14 @@ const navItems: NavItem[] = [
   },
   {
     icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/profile",
+    name: "Customers",
+    path: "/customers",
   },
-
+// {
+//     icon: <UserCircleIcon />,
+//     name: "User Profile",
+//     path: "/profile",
+//   },
   {
     name: "Forms",
     icon: <ListIcon />,
