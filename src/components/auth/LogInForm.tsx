@@ -22,7 +22,6 @@ export default function LogInForm() {
   const onSubmit = async (data: any) => {
     setLoading(true);
     setError(null);
-    console.log(data, `form data`);
     
     try {
       const result = await signIn("credentials", {

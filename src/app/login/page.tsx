@@ -1,5 +1,4 @@
 import LogInForm from "@/components/auth/LogInForm";
-import SignInForm from "@/components/auth/SignInForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
