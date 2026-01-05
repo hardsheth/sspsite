@@ -5,24 +5,44 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import DataTableCard from '@/components/common/DataTableCard';
 import Button from '@/components/ui/button/Button';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
+import DataTable from '@/components/tables/DataTable';
 
 type QRResponse = {
   status: 'NOT_STARTED' | 'QR' | 'READY';
   qr: string | null;
 };
 
+async function fetchSessions() {
+  const res = await fetch(`/api/whatsapp`, {
+    cache: "no-store",
+  });
+  const json = await res.json();
+  console.log(json, "fetch session");
+
+  // adapt to the existing shape if necessary
+  return json.list ?? json;
+}
+
 const WhatsAppPage = () => {
-  const [data, setData] = useState<QRResponse | null>(null);
+  const [whatsappData, setWhatsappData] = useState<QRResponse | null>(null);
+  // const [whatsappData, setWhatds] = useState([]);
+  // const whatsappData = fetchSessions();
   const [accountId, setAccountId] = useState<string>('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
     if (accountId) {
       const timer = setInterval(async () => {
         const res = await fetch(
-          `http://localhost:3001/api/whatsapp?sessionId=${accountId}`
+          `http://localhost:3001/api/whatsapp/session?sessionId=${accountId}`
         );
         const json = await res.json();
-        setData(json);
+        setWhatsappData(json);
       }, 2000);
 
       return () => clearInterval(timer);
@@ -30,7 +50,7 @@ const WhatsAppPage = () => {
   }, [accountId]);
 
   const startSession = async () => {
-    const res = await fetch('/api/whatsapp', {
+    const res = await fetch('/api/whatsapp/session', {
       method: 'POST',
     });
     const data = await res.json();
@@ -51,7 +71,7 @@ const WhatsAppPage = () => {
 
   const logout = async () => {
     if (!accountId) return;
-    await fetch('/api/whatsapp/logout', {
+    await fetch('/api/whatsapp/session/logout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ accountId }),
@@ -59,81 +79,91 @@ const WhatsAppPage = () => {
     setAccountId('');
   };
 
+  const header = [
+
+    {
+      header: "Phone",
+      accessorKey: "ContactNo",
+    },
+    {
+      header: "Status",
+      accessorKey: "Status",
+    },
+  ];
+
   return (
     <div>
       <PageBreadcrumb pageTitle="WhatsApp" />
       <div className="space-y-6">
-        {/* <ComponentCard title="WhatsApp Instance">
-          <div className="space-y-4">
-            <div>
-              <p>Account ID: {accountId || 'Not created yet'}</p>
-            </div>
-            <div>
-              <p>Status: {status}</p>
-              {error && <p className="text-red-500">Error: {error}</p>}
-              {qrCode && (
-                <div>
-                  <p>Scan this QR code with WhatsApp:</p>
-                  <img src={qrCode} alt="QR Code" />
-                </div>
+        {/* <DataTableCard
+          title="WhatsApp Instance"
+          headerActions={
+            <div className="flex items-center gap-3">
+              <Button size="sm" variant="primary" onClick={startSession}>
+                Create Whatsapp Session
+              </Button>
+              {accountId && (
+                <Button size="sm" variant="outline" onClick={() => setConfirmOpen(true)}>
+                  Logout
+                </Button>
               )}
-            </div>
-            <div className="flex space-x-2">
-              {!qrCode && <button
-                onClick={startSession}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Create Session
-              </button>}
-              <button
-                onClick={logout}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Logout
-              </button>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">To</label>
-              <input
-                type="text"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              <ConfirmDialog
+                isOpen={confirmOpen}
+                title="Confirm Logout"
+                description="Are you sure you want to logout this WhatsApp session?"
+                onConfirm={async () => { await logout(); setConfirmOpen(false); }}
+                onCancel={() => setConfirmOpen(false)}
+                confirmText="Logout"
+                cancelText="Cancel"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Message</label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-            <button
-              onClick={sendMessage}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Send Message
-            </button>
-          </div>
-        </ComponentCard> */}
-        <DataTableCard title="WhatsApp Instance">
-          <div className="flex justify-end">
-            <Button size="sm" variant="primary" onClick={startSession}>
-              Create Whatsapp Session
-            </Button>
-          </div>
-          {data&&data.status === 'NOT_STARTED' && <p>Starting session…</p>}
+          }
+        >
+          {whatsappData && whatsappData.status === 'NOT_STARTED' && <p>Starting session…</p>}
 
-          {data&&data.status === 'QR' && data.qr && (
+          {whatsappData && whatsappData.status === 'QR' && whatsappData.qr && (
             <>
               <p>Scan QR Code</p>
-              <img src={data.qr} alt="QR" />
+              <img src={whatsappData.qr} alt="QR" />
             </>
           )}
 
-          {data&&data.status === 'READY' && <p>✅ WhatsApp logged in</p>}
+          {whatsappData && whatsappData.status === 'READY' && <p>✅ WhatsApp logged in</p>}
+          <DataTable columns={header} data={whatsappData} pagination pageIndex={pageIndex} pageSize={pageSize} onPageIndexChange={setPageIndex} onPageSizeChange={setPageSize} />
+        </DataTableCard> */}
+        <DataTableCard title="Whatsapp List" showPagination totalPages={totalPages} totalItems={totalItems} initialPageSize={10}
+          onPageChange={async (pageIndex, pageSize) => {
+            setLoading(true);
+            try {
+              const res = await fetch(`/api/whatsapp?page=${pageIndex + 1}&size=${pageSize}`, { cache: 'no-store' });
+              const json = await res.json();
+              const items = json.list ?? json.items ?? json;
+              console.log(items, `next click page data`);
 
+              setData(items || []);
+              // try to read total pages count if available (pageCount or totalPages),
+              // otherwise compute from total items if provided
+              const serverPageCount = json.pageCount ?? json.totalPages ?? json.page_count ?? undefined;
+              if (typeof serverPageCount === 'number') {
+                setTotalPages(serverPageCount);
+              } else if (typeof json.total === 'number') {
+                setTotalPages(Math.max(1, Math.ceil(json.total / pageSize)));
+              } else {
+                // fallback: if items length returned and fewer than requested, approximate
+                setTotalPages(prev => Math.max(1, prev || Math.ceil((Array.isArray(items) ? items.length : 0) / pageSize)));
+              }
+              // total items (record count) if provided by API
+              const totalFromApi = json.total ?? json.totalItems ?? json.count ?? undefined;
+              if (typeof totalFromApi === 'number') setTotalItems(totalFromApi);
+              else if (Array.isArray(items)) setTotalItems(prev => prev || items.length);
+            } finally { setLoading(false); }
+          }}
+        >
+          {({ pageIndex, pageSize, setPageIndex, setPageSize }: any) => (
+            <>
+              {loading ? <div>Loading...</div> : <DataTable columns={header} data={data} pagination pageIndex={pageIndex} pageSize={pageSize} onPageIndexChange={setPageIndex} onPageSizeChange={setPageSize} />}
+            </>
+          )}
         </DataTableCard>
       </div>
     </div>
