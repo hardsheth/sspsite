@@ -12,6 +12,7 @@ interface DataTableCardProps {
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
   headerActions?: React.ReactNode;
+  modalOnly?: React.ReactNode;
   /** show pagination footer */
   showPagination?: boolean;
   /** total items (required for pagination math) */
@@ -106,6 +107,7 @@ const DataTableCard: React.FC<DataTableCardProps> = ({
   children,
   className = "",
   desc = "",
+  modalOnly = null,
   headerActions = null,
   showPagination = false,
   totalItems = 0,
@@ -147,6 +149,7 @@ const DataTableCard: React.FC<DataTableCardProps> = ({
           {desc && <p className="text-xs text-gray-500 mt-1">{desc}</p>}
         </div>
         <div className="flex items-center gap-3">{headerActions}</div>
+        <div className="flex items-center gap-3">{modalOnly}</div>
       </div>
 
       {/* Card Body */}
@@ -157,21 +160,21 @@ const DataTableCard: React.FC<DataTableCardProps> = ({
       {/* Pagination Footer */}
       {showPagination && (
         <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 rounded-b-2xl">
-            <div className="max-w-full mx-auto flex items-center justify-between gap-4">
-              {/* Left: showing range */}
-              <div className="flex items-center gap-3">
-                {typeof totalItems === 'number' && totalItems > 0 ? (
-                  <div className="text-sm text-gray-600 dark:text-gray-300">
-                    <div className="text-sm">Showing <span className="font-medium text-gray-800 dark:text-white">{Math.min(totalItems, pageIndex * pageSize + 1)}-{Math.min(totalItems, (pageIndex + 1) * pageSize)}</span></div>
-                    <div className="text-xs text-gray-500">of {totalItems} documents</div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-600">{pageSize} Documents</div>
-                )}
-              </div>
+          <div className="max-w-full mx-auto flex items-center justify-between gap-4">
+            {/* Left: showing range */}
+            <div className="flex items-center gap-3">
+              {typeof totalItems === 'number' && totalItems > 0 ? (
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  <div className="text-sm">Showing <span className="font-medium text-gray-800 dark:text-white">{Math.min(totalItems, pageIndex * pageSize + 1)}-{Math.min(totalItems, (pageIndex + 1) * pageSize)}</span></div>
+                  <div className="text-xs text-gray-500">of {totalItems} documents</div>
+                </div>
+              ) : (
+                <div className="text-sm text-gray-600">{pageSize} Documents</div>
+              )}
+            </div>
 
-              {/* Center: page numbers */}
-              <div className="flex items-center gap-3">
+            {/* Center: page numbers */}
+            <div className="flex items-center gap-3">
               {(() => {
                 const current = pageIndex + 1;
                 const pages: (number | string)[] = [];
@@ -196,22 +199,22 @@ const DataTableCard: React.FC<DataTableCardProps> = ({
                     pages.push(totalPages);
                   }
                 }
-                  return pages.map((p, idx) => {
-                    if (p === '...') return <div key={'dot-' + idx} className="px-2 text-sm text-gray-400">…</div>;
-                    const pn = p as number;
-                    const active = pn === current;
-                    return (
-                      <button
-                        key={pn}
-                        onClick={() => setPageIndex(pn - 1)}
-                        className={`min-w-[36px] h-9 flex items-center justify-center px-3 text-sm rounded-full ${active ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'}`}
-                      >
-                        {pn}
-                      </button>
-                    );
-                  });
+                return pages.map((p, idx) => {
+                  if (p === '...') return <div key={'dot-' + idx} className="px-2 text-sm text-gray-400">…</div>;
+                  const pn = p as number;
+                  const active = pn === current;
+                  return (
+                    <button
+                      key={pn}
+                      onClick={() => setPageIndex(pn - 1)}
+                      className={`min-w-[36px] h-9 flex items-center justify-center px-3 text-sm rounded-full ${active ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'}`}
+                    >
+                      {pn}
+                    </button>
+                  );
+                });
               })()}
-              </div>
+            </div>
 
             {/* Right: prev/next */}
             <div className="flex items-center gap-3">
@@ -221,7 +224,7 @@ const DataTableCard: React.FC<DataTableCardProps> = ({
                 className="flex items-center gap-2 px-3 py-2 rounded-full border text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
               >
                 <span className="hidden sm:inline">Previous</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
               <button
                 onClick={() => setPageIndex(p => Math.min(totalPages - 1, p + 1))}
@@ -229,7 +232,7 @@ const DataTableCard: React.FC<DataTableCardProps> = ({
                 className="flex items-center gap-2 px-3 py-2 rounded-full border text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
               >
                 <span className="hidden sm:inline">Next</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             </div>
           </div>

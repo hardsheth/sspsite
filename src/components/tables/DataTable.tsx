@@ -76,7 +76,7 @@ function DataTable<T>({ columns, data, pagination = true, initialPageSize = 10, 
         </thead>
 
         <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-          {table.getRowModel().rows.map(row => (
+          {table.getRowModel().rows.length > 0 ? (table.getRowModel().rows.map(row => (
             <tr
               key={row.id}
             >
@@ -92,7 +92,14 @@ function DataTable<T>({ columns, data, pagination = true, initialPageSize = 10, 
                 </td>
               ))}
             </tr>
-          ))}
+          ))) : (<tr>
+            <td
+              colSpan={table.getAllLeafColumns().length}
+              className="px-4 py-6 text-center text-gray-500 text-theme-sm dark:text-gray-400"
+            >
+              No Data Available
+            </td>
+          </tr>)}
         </tbody>
       </table>
     </div>

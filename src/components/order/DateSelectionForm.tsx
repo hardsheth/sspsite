@@ -32,7 +32,7 @@ export const DateSelectionForm = () => {
                     )}
                 />
             </div>
-            <div>
+            <div className=' mb-6'>
                 <Controller
                     name="deliveryDate"
                     control={control}
@@ -57,7 +57,7 @@ export const DateSelectionForm = () => {
                     )}
                 />
             </div>
-            <div>
+            <div className=' mb-6'>
                 <Controller
                     name="returnDate"
                     control={control}
