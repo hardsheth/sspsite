@@ -8,6 +8,9 @@ import VoiceInput from "../form/voice-input/VoiceInput";
 import VoiceTextarea from "../form/voice-input/VoiceTextArea";
 import ContactForm from "./ContactForm";
 import ItemBookForm from "./ItemBookForm";
+import TotalForm from "./TotalForm";
+import Select from "../form/Select";
+import { ReactNode } from "react";
 
 interface FormValues {
   customerName: string;
@@ -26,7 +29,12 @@ interface FormValues {
   total?: number | string
 }
 
-export default function OrderForm() {
+export const PaymentOptionsList = [
+  { value: "UPI", label: "UPI" },
+  { value: "Cash on Delivery", label: "Cash on Delivery" },
+];
+
+export default function OrderFormAdmin() {
 
   const method = useForm<FormValues>({
     defaultValues: {
@@ -34,10 +42,19 @@ export default function OrderForm() {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log("Form submitted:", data);
     const restructureData = JSON.parse(JSON.stringify(data));
     restructureData.contactNumbers = restructureData.contactNumbers.filter((item: string) => (item !== null && item !== ''))
+    const apiCall = await fetch(`/api/order`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(restructureData),
+    });
+    const response = apiCall.json();
+    console.log(response, 'response ----------------------');
 
   };
 
@@ -81,12 +98,41 @@ export default function OrderForm() {
         <div className="mb-2">
           <ItemBookForm />
         </div>
-        {/* <Input placeholder="Email" {...register("email")} /> */}
-        {/* 
-        <Input placeholder="Booking Date" {...register("bookingDate")} />
-        <Input placeholder="Delivery Date" {...register("deliveryDate")} />
-        <Input placeholder="Return Date" {...register("returnDate")} />
-        */}
+        <div className="mb-2">
+          <TotalForm />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 mb-2">
+          <div>
+            <Controller
+              name="paymentMethod"
+              control={method.control}
+              rules={{
+                required: {
+                  message: "Payment Method is required",
+                  value: true
+                }
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <Label>
+                    Payment Method
+                  </Label>
+                  <Select
+                    options={PaymentOptionsList}
+                    placeholder="Select Option"
+                    {...field}
+                    className="dark:bg-dark-900"
+                  />
+                  {error && <p
+                    className={`mt-1.5 text-xs text-error-500`}
+                  >
+                    {error as ReactNode}
+                  </p>}
+                </>
+              )}
+            />
+          </div>
+        </div>
         <button type="submit" className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600">Submit</button>
       </Form>
     </FormProvider>

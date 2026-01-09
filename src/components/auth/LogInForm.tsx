@@ -22,7 +22,7 @@ export default function LogInForm() {
   const onSubmit = async (data: any) => {
     setLoading(true);
     setError(null);
-    
+    console.log(data, `login credentials`);
     try {
       const result = await signIn("credentials", {
         email: data.UserName,
@@ -30,7 +30,8 @@ export default function LogInForm() {
         rememberMe: data.RememberMe,
         redirect: false,
       });
-
+      console.log(result, `signIn result`);
+      
       if (result?.error) {
         setError(result.error);
       } else {
@@ -102,10 +103,10 @@ export default function LogInForm() {
                   name="RememberMe"
                   control={method.control}
                   rules={{
-                    required: {
-                      message: "RememberMe is required",
-                      value: true
-                    }
+                    // required: {
+                    //   message: "RememberMe is required",
+                    //   value: true
+                    // }
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <Checkbox checked={field.value} {...field} />
@@ -125,7 +126,7 @@ export default function LogInForm() {
               <p className="text-sm text-center text-red-500">{error}</p>
             )}
 
-            <Button className="w-full" size="sm" disabled={loading}>
+            <Button className="w-full" size="sm" disabled={loading} onClick={method.handleSubmit(onSubmit)}>
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
 

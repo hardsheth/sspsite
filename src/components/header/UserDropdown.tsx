@@ -18,7 +18,10 @@ export default function UserDropdown() {
     setIsOpen(false);
   }
 
-  const handleSignOut = () => { signOut({ callbackUrl: "/login" }) };
+  const handleSignOut = () => {
+    console.log(`log out`);
+    signOut({ callbackUrl: "/login" })
+  };
 
   return (
     <div className="relative">

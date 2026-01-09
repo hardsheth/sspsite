@@ -13,56 +13,54 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         try {
-          console.log(credentials, `credentials auth`);
-          
           const { email, password } = credentials
 
           // Call external auth API
           const response = await axios.post(
             `${process.env.EXTERNAL_API_URL}/login`,
-            { email, password },
+            { UserName: email, Password: password },
             {
               headers: {
                 'Content-Type': 'application/json',
               },
             }
           )
-          console.log(response.data, `auth response`);
-          
-          const { accessToken, refreshToken, user } = response.data
 
-          if (user) {
-            return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              accessToken,
-              refreshToken,
-            }
+          const { token, refreshToken, data: user } = response.data
+
+          if (!user) {
+            throw null;
           }
-
-          return null
+          console.log(token, `token`, refreshToken, `refreshtoken`, user);
+          return {
+            id: String((user as any).id),
+            email: (user as any).Email || '',
+            name: (user as any).UserName || '',
+            accessToken: token,
+            refreshToken,
+          }
         } catch (error) {
           console.error('Auth error:', error)
-          return null
+          return null;
         }
       },
     }),
   ],
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60 * 24,
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = user.accessToken
-        token.refreshToken = user.refreshToken
+        token.accessToken = (user as any).accessToken
+        token.refreshToken = (user as any).refreshToken
       }
       return token
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken
-      session.refreshToken = token.refreshToken
+      session.accessToken = token.accessToken as string
+      session.refreshToken = token.refreshToken as string
       return session
     },
   },

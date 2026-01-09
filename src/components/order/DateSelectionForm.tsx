@@ -7,7 +7,7 @@ export const DateSelectionForm = () => {
     const bookingDate = watch('bookingDate')
     const deliveryDate = watch('deliveryDate')
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
             <div>
                 <Controller
                     name="bookingDate"
@@ -32,7 +32,7 @@ export const DateSelectionForm = () => {
                     )}
                 />
             </div>
-            <div className=' mb-6'>
+            <div className=''>
                 <Controller
                     name="deliveryDate"
                     control={control}
@@ -57,7 +57,7 @@ export const DateSelectionForm = () => {
                     )}
                 />
             </div>
-            <div className=' mb-6'>
+            <div className=''>
                 <Controller
                     name="returnDate"
                     control={control}
