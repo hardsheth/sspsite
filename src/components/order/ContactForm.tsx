@@ -14,7 +14,7 @@ const ContactForm = () => {
                     name={`contactNumbers.0`}
                     control={method.control}
                     render={({ field, fieldState: { error } }) => (
-                        <Input placeholder="Enter Phone Number" type="text" hint={error?.message} error={error ? true : false} {...field} />
+                        <Input defaultValue={field.value} placeholder="Enter Phone Number" type="text" hint={error?.message} error={error ? true : false} {...field} />
                     )}
                 />
             </div>
@@ -26,7 +26,7 @@ const ContactForm = () => {
                     name={`contactNumbers.1`}
                     control={method.control}
                     render={({ field, fieldState: { error } }) => (
-                        <Input placeholder="Enter Phone Number" type="text" hint={error?.message} error={error ? true : false} {...field} />
+                        <Input placeholder="Enter Phone Number" defaultValue={field.value} type="text" hint={error?.message} error={error ? true : false} {...field} />
                     )}
                 />
             </div>

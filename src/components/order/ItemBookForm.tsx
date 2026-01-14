@@ -37,7 +37,7 @@ const ItemBookForm = () => {
                                 }
                             }}
                             render={({ field, fieldState: { error } }) => (
-                                <Input placeholder="Enter Item Name" type="text" hint={error?.message} error={error ? true : false} {...field} />
+                                <Input defaultValue={field.value} placeholder="Enter Item Name" type="text" hint={error?.message} error={error ? true : false} {...field} />
                             )}
                         />
                     </div>
@@ -55,7 +55,7 @@ const ItemBookForm = () => {
                                 }
                             }}
                             render={({ field, fieldState: { error } }) => (
-                                <Input placeholder="Enter Quantity" type="text" hint={error?.message} error={error ? true : false} {...field} />
+                                <Input defaultValue={field.value} placeholder="Enter Quantity" type="text" hint={error?.message} error={error ? true : false} {...field} />
                             )}
                         />
                     </div>
@@ -73,7 +73,7 @@ const ItemBookForm = () => {
                                 }
                             }}
                             render={({ field, fieldState: { error } }) => (
-                                <Input placeholder="Enter Pcs" type="text" hint={error?.message} error={error ? true : false} {...field} />
+                                <Input defaultValue={field.value} placeholder="Enter Pcs" type="text" hint={error?.message} error={error ? true : false} {...field} />
                             )}
                         />
                     </div>

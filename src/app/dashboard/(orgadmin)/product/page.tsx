@@ -4,9 +4,6 @@ import { useState } from "react";
 import DataTableCard from "@/components/common/DataTableCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import DataTable from "@/components/tables/DataTable";
-import { useRouter } from "next/navigation";
-import Button from "@/components/ui/button/Button";
-import { FiEye } from "react-icons/fi";
 
 type DateLabelProps = {
     value?: string | Date | null
@@ -113,7 +110,7 @@ const Page = () => {
     const [loading, setLoading] = useState(false);
     const [totalPages, setTotalPages] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
-    const router = useRouter();
+
     // initial fetch will be triggered via DataTableCard onPageChange callback
 
     const header = [
@@ -180,23 +177,6 @@ const Page = () => {
             header: "Payment Received",
             accessorKey: "PaymentMethod",
         },
-        {
-            header: "Action",
-            accessorKey: "_id",
-            cell: ({ row }: any) => {
-                const data = row.original;
-                return (
-                    <div className="flex gap-2">
-                        <Button size="sm" variant="primary" startIcon={<FiEye />} onClick={() => {
-                           router.push(`/dashboard/orderlist/${data._id}`)
-                        }}>
-                            {''}
-                        </Button>
-                     
-                    </div>
-                );
-            }
-        }
     ];
 
     return (

@@ -4,24 +4,44 @@ import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
-  const session = await auth() as Session;
-  const body = await request.json();
-  console.log(session.accessToken, `session.accessToken`);
-
-  const response = await axios.post(`${process.env.EXTERNAL_API_URL}/order`,
-    body,
-    {
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-      },
+  try {
+    const session = await auth() as Session;
+    const body = await request.json();
+    const response = await axios.post(`${process.env.EXTERNAL_API_URL}/order`,
+      body,
+      {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+      const orderResponse = response.data;
+    return NextResponse.json({
+      ...orderResponse,
     });
-  console.log(response, "ordeer ", response.status);
+  } catch (error) {
+    console.log(`API ERROR:-`, error,);
+    if (axios.isAxiosError(error)) {
+      return NextResponse.json(
+        {
+          message: error.response?.data?.message || "External API error",
+          error: error.response?.data,
+        },
+        {
+          status: error.response?.status || 500,
+        }
+      );
+    }
 
-  const orderResponse = response.data;
-  // const orderResponse = data;
-  return NextResponse.json({
-    ...orderResponse,
-  });
+    // ✅ Generic fallback error
+    return NextResponse.json(
+      {
+        message: "Internal server error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }
 
 
@@ -41,7 +61,7 @@ export async function GET(request: NextRequest) {
   if (page) params.page = page;
   if (size) params.limit = size;
 
-  const response = await axios.get(`${process.env.EXTERNAL_API_URL}/customer`, {
+  const response = await axios.get(`${process.env.EXTERNAL_API_URL}/order`, {
     params,
     headers: {
       Authorization: `Bearer ${session.accessToken}`,

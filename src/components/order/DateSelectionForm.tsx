@@ -22,8 +22,9 @@ export const DateSelectionForm = () => {
                         <DatePickerCustom
                             id="date-picker"
                             label="Booking Date "
-                            placeholder="Select a date"
+                            placeholder="Select a booking date"
                             required={true}
+                            defaultDate={field.value}
                             onChange={(dates, currentDateString) => {
                                 field.onChange(currentDateString);
                             }}
@@ -46,9 +47,10 @@ export const DateSelectionForm = () => {
                         <DatePickerCustom
                             id="date-picker-delivery"
                             label="Delivery Date"
-                            placeholder="Select a date"
+                            placeholder="Select a delivery date"
                             minDate={bookingDate}
                             required={true}
+                            defaultDate={field.value}
                             onChange={(dates, currentDateString) => {
                                 field.onChange(currentDateString);
                             }}
@@ -71,8 +73,9 @@ export const DateSelectionForm = () => {
                         <DatePickerCustom
                             id="date-picker-return"
                             label="Return Date "
-                            placeholder="Select a date"
+                            placeholder="Select a return date"
                             minDate={deliveryDate}
+                            defaultDate={field.value}
                             required={true}
                             onChange={(dates, currentDateString) => {
                                 field.onChange(currentDateString);

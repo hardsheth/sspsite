@@ -56,7 +56,7 @@ const Page = () => {
                                 setTotalPages(prev => Math.max(1, prev || Math.ceil((Array.isArray(items) ? items.length : 0) / pageSize)));
                             }
                             // total items (record count) if provided by API
-                            const totalFromApi = json.total ?? json.totalItems ?? json.count ?? undefined;
+                            const totalFromApi = json.TotalRecords ?? json.count ?? undefined;
                             if (typeof totalFromApi === 'number') setTotalItems(totalFromApi);
                             else if (Array.isArray(items)) setTotalItems(prev => prev || items.length);
                         } finally { setLoading(false); }

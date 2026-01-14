@@ -31,7 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (!user) {
             throw null;
           }
-          console.log(token, `token`, refreshToken, `refreshtoken`, user);
+          
           return {
             id: String((user as any).id),
             email: (user as any).Email || '',
