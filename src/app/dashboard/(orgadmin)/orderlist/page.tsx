@@ -7,6 +7,8 @@ import DataTable from "@/components/tables/DataTable";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/button/Button";
 import { FiEye } from "react-icons/fi";
+import { Modal } from "@/components/ui/modal";
+import { ReturnOrderForm } from "@/components/order/ReturnOrderForm";
 
 type DateLabelProps = {
     value?: string | Date | null
@@ -47,7 +49,12 @@ export enum PaymentStatusEnum {
     PARTIALLY_PAID = "partially_paid",
 }
 
-const PAYMENT_STATUS_LABEL_CLASSES: Record<PaymentStatusEnum|OrderStatusEnum, string> = {
+
+
+const allowReturnPayment = [PaymentStatusEnum.PAID, PaymentStatusEnum.PARTIALLY_REFUNDED, PaymentStatusEnum.PARTIALLY_PAID];
+const allowReturnOrder = [OrderStatusEnum.CONFIRED, OrderStatusEnum.DELIVERED, OrderStatusEnum.SHIPPED];
+
+const PAYMENT_STATUS_LABEL_CLASSES: Record<PaymentStatusEnum | OrderStatusEnum, string> = {
     [PaymentStatusEnum.PENDING]:
         "border border-yellow-500 text-yellow-600 bg-yellow-50 dark:bg-yellow-500/10 dark:text-yellow-400",
 
@@ -69,7 +76,7 @@ const PAYMENT_STATUS_LABEL_CLASSES: Record<PaymentStatusEnum|OrderStatusEnum, st
     [PaymentStatusEnum.PARTIALLY_PAID]:
         "border border-blue-500 text-blue-600 bg-blue-50 dark:bg-blue-500/10 dark:text-blue-400",
 
-      [OrderStatusEnum.CREATED]:
+    [OrderStatusEnum.CREATED]:
         "border border-gray-400 text-gray-600 bg-gray-50 dark:bg-gray-500/10 dark:text-gray-400",
 
     [OrderStatusEnum.CONFIRED]:
@@ -83,34 +90,35 @@ const PAYMENT_STATUS_LABEL_CLASSES: Record<PaymentStatusEnum|OrderStatusEnum, st
 
     [OrderStatusEnum.RETURNED]:
         "border border-orange-500 text-orange-600 bg-orange-50 dark:bg-orange-500/10 dark:text-orange-400",
-    };
+};
 
 interface StatusLabelProps {
-  status: PaymentStatusEnum|OrderStatusEnum;
+    status: PaymentStatusEnum | OrderStatusEnum;
 }
 
 function StatusLabel({ status }: StatusLabelProps) {
-  const key = status.toLowerCase();
+    const key = status.toLowerCase();
 
-  return (
-    <span
-      className={`
+    return (
+        <span
+            className={`
         inline-flex items-center
         px-3 py-1
         text-sm font-medium
         rounded-md
         whitespace-nowrap capitalize
-        ${PAYMENT_STATUS_LABEL_CLASSES[status] }
+        ${PAYMENT_STATUS_LABEL_CLASSES[status]}
       `}
-    >
-      {status}
-    </span>
-  );
+        >
+            {status}
+        </span>
+    );
 }
 
 const Page = () => {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [returnShow, setReturnShow] = useState(false);
     const [totalPages, setTotalPages] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
     const router = useRouter();
@@ -172,7 +180,7 @@ const Page = () => {
         {
             header: "Order Status",
             accessorKey: "Status",
-             cell: ({ getValue }: any) => (
+            cell: ({ getValue }: any) => (
                 <StatusLabel status={getValue() as OrderStatusEnum} />
             ),
         },
@@ -188,11 +196,16 @@ const Page = () => {
                 return (
                     <div className="flex gap-2">
                         <Button size="sm" variant="primary" startIcon={<FiEye />} onClick={() => {
-                           router.push(`/dashboard/orderlist/${data._id}`)
+                            router.push(`/dashboard/orderlist/${data._id}`)
                         }}>
                             {''}
                         </Button>
-                     
+                        {allowReturnPayment.includes(data.PaymentStatus) &&
+                            allowReturnOrder.includes(data.Status) && <Button size="sm" variant="danger" onClick={() => {
+                                setReturnShow(true);
+                            }}>
+                                Return {data.Status}
+                            </Button>}
                     </div>
                 );
             }
@@ -240,6 +253,12 @@ const Page = () => {
                     )}
                 </DataTableCard>
             </div>
+            <Modal isOpen={returnShow} onClose={() => { setReturnShow(false) }} showCloseButton={true} className="max-w-md p-6">
+                <div className="">
+                    <ReturnOrderForm onCancel={() => setReturnShow(false)} onConfirm={() => setReturnShow(false)} />
+
+                </div>
+            </Modal>
         </div>
     );
 };

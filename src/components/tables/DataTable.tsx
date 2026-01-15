@@ -23,25 +23,6 @@ interface DataTableProps<T> {
 }
 
 function DataTable<T>({ columns, data, pagination = true, initialPageSize = 10, pageIndex: controlledPageIndex, pageSize: controlledPageSize, onPageIndexChange, onPageSizeChange }: DataTableProps<T>) {
-  const [internalPageIndex, setInternalPageIndex] = useState(0);
-  const [internalPageSize, setInternalPageSize] = useState(initialPageSize);
-
-  const pageIndex = controlledPageIndex ?? internalPageIndex;
-  const pageSize = controlledPageSize ?? internalPageSize;
-
-  const setPageIndex = (n: number) => {
-    if (onPageIndexChange) onPageIndexChange(n);
-    else setInternalPageIndex(n);
-  };
-
-  const setPageSize = (n: number) => {
-    if (onPageSizeChange) onPageSizeChange(n);
-    else setInternalPageSize(n);
-    // reset to first page when size changes
-    if (!controlledPageIndex && !onPageIndexChange) setInternalPageIndex(0);
-    if (onPageIndexChange) onPageIndexChange(0);
-  };
-
   const pagedData = useMemo(() => {
     if (!pagination) return data;
     return data;
@@ -52,8 +33,6 @@ function DataTable<T>({ columns, data, pagination = true, initialPageSize = 10, 
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-  console.log(pagedData, `page data for react table`);
-
   return (
     <div className="w-full overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <table className="min-w-[900px] w-full text-sm">

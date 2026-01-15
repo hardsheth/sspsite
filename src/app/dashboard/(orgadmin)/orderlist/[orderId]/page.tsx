@@ -38,7 +38,6 @@ const page = () => {
             setLoading(true);
             const restructureData = JSON.parse(JSON.stringify(data));
             restructureData.contactNumbers = restructureData.contactNumbers.filter((item: string) => (item !== null && item !== ''));
-            console.log(`restructure data`, restructureData);
             const res = await fetch(`/api/order/${orderId}`, {
                 method: 'POST',
                 body: JSON.stringify(restructureData),
@@ -56,7 +55,7 @@ const page = () => {
 
     const orderDetails = useMemo(() => {
         if (editOrder === true) {
-            return <UpdateOrderFormAdmin orderData={orderData} submitData={updateProduct} />
+            return <UpdateOrderFormAdmin orderData={orderData} submitData={updateProduct} cancelData={() => setEditOrder(false)} />
         } else {
             return <ViewOrderFormAdmin orderData={orderData} />
         }

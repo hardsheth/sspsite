@@ -13,6 +13,9 @@ import { ReactNode, useEffect } from "react";
 import { ViewFormValues } from "./ViewOrderFormAdmin";
 import Input from "../form/input/InputField";
 import CustomSelect from "../form/CustomSelect";
+import Button from "../ui/button/Button";
+import { FaRegFloppyDisk } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 
 interface FormValues {
   customerName: string;
@@ -21,7 +24,7 @@ interface FormValues {
   deliveryDate: Date | null;
   returnDate: Date | null;
   paymentMethod: string;
-  OrderStatus: string;
+  Status: string;
   advancePaid: string | number;
   remainAmount: string | number;
   PaymentStatus: string
@@ -60,9 +63,10 @@ export const PaymentStatusList = [
 interface UpdateOrderFormAdminProps {
   orderData: FormValues | ViewFormValues | null;
   submitData: (data: any) => void;
+  cancelData: () => void;
 }
 
-export default function UpdateOrderFormAdmin({ orderData, submitData }: UpdateOrderFormAdminProps) {
+export default function UpdateOrderFormAdmin({ orderData, submitData, cancelData }: UpdateOrderFormAdminProps) {
 
   const method = useForm<FormValues>({
     defaultValues: orderData as FormValues || {
@@ -98,7 +102,7 @@ export default function UpdateOrderFormAdmin({ orderData, submitData }: UpdateOr
       method.setValue('rent', details?.PayDetails.rent);
       method.setValue('deposit', details?.PayDetails.deposit);
       method.setValue('PaymentStatus', details?.PaymentStatus);
-      method.setValue('OrderStatus', details?.Status);
+      method.setValue('Status', details?.Status);
       // if(details.transactions){
       const total = Number(details?.PayDetails.rent) + Number(details?.PayDetails.deposit);
       const paidAdvance = details.transactions.reduce((sum, item: any) => sum + item.totalAmount, 0);
@@ -190,7 +194,7 @@ export default function UpdateOrderFormAdmin({ orderData, submitData }: UpdateOr
               Order Status <span className="text-error-500">*</span>
             </Label>
             <Controller
-              name="OrderStatus"
+              name="Status"
               control={method.control}
               rules={{
                 required: {
@@ -270,34 +274,14 @@ export default function UpdateOrderFormAdmin({ orderData, submitData }: UpdateOr
               )}
             />
           </div>
-          {/* <div>
-            <Label>
-              Pay Amount <span className="text-error-500">*</span>
-            </Label>
-            <Controller
-              name="PayAmount"
-              control={method.control}
-              rules={{
-                required: {
-                  message: "Remain Amount is required",
-                  value: true
-                },
-                min: 0,
-                max: {
-                  value: (Number(method.watch('total')) - (Number(method.watch('advancePaid') || 0))),
-                  message: `Please Enter`
-                }
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <Input placeholder="Remaining Amount" type="number" hint={error?.message} error={error ? true : false} {...field} defaultValue={field.value} />
-              )}
-            />
-          </div> */}
-
         </div>
         <div className="flex justify-center gap-4">
-          <button type="submit" className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600">Submit</button>
-          <button type="reset" className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600">Cancel</button>
+          <Button size="md" variant="primary" startIcon={<FaRegFloppyDisk height={20} fontWeight={20} />} type="submit" >
+            Save
+          </Button>
+          <Button size="md" variant="danger" className='ml-2' startIcon={<IoClose height={20} fontWeight={20} />} type="button" onClick={() => cancelData()}>
+            Cancel
+          </Button>
         </div>
       </Form>
     </FormProvider>

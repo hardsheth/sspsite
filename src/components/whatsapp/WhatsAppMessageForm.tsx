@@ -16,13 +16,13 @@ interface FormValues {
   file?: File;
 }
 
-interface WhatsappMessageFormProps {
+export interface CustomFormProps {
   onConfirm: (data: any) => void;
   onCancel: () => void;
 }
 
 
-export default function WhatsAppMessageForm({ onCancel, onConfirm }: WhatsappMessageFormProps) {
+export default function WhatsAppMessageForm({ onCancel, onConfirm }: CustomFormProps) {
 
   const method = useForm<FormValues>({
     defaultValues: {
@@ -39,7 +39,7 @@ export default function WhatsAppMessageForm({ onCancel, onConfirm }: WhatsappMes
   return (
     <FormProvider {...method}>
       <Form onSubmit={method.handleSubmit(onSubmit)} className="p-6 w-full">
-        <div className=" mb-6">
+        <div className="mb-6">
           <Controller
             name="contactNumbers"
             control={method.control}
@@ -72,7 +72,7 @@ export default function WhatsAppMessageForm({ onCancel, onConfirm }: WhatsappMes
             }}
           />
         </div>
-        <div className=" mb-6">
+        <div className="mb-6">
           <Label>
             Message
           </Label>
@@ -92,7 +92,7 @@ export default function WhatsAppMessageForm({ onCancel, onConfirm }: WhatsappMes
             }}
           />
         </div>
-        <div className=" mb-6">
+        <div className="mb-6">
           <Controller
             name="file"
             control={method.control}
